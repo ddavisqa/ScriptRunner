@@ -1,0 +1,21 @@
+import groovy.sql.Sql
+import java.sql.Driver
+/* Connecting to the Database  */
+
+def driver = Class.forName('org.postgresql.Driver').newInstance() as Driver 
+
+def props = new Properties()
+props.setProperty("user", "devtools") 
+props.setProperty("password", "devtools")
+
+def conn = driver.connect("jdbc:postgresql://localhost:5432/jira_6.4.6", props) 
+def sql = new Sql(conn)
+
+try {
+    sql.eachRow("select count(*) from jiraissue") {
+        log.debug(it)
+    }
+} finally {
+    sql.close()
+    conn.close()
+}
